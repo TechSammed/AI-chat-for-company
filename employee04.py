@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_community.agent_toolkits.sql.base import create_sql_agent, SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
-from langchain.callbacks.base import BaseCallbackHandler
+from langchain_core.callbacks.base import BaseCallbackHandler
 
 # --- CUSTOM STREAMLIT CALLBACK HANDLER ---
 class StreamlitCallbackHandler(BaseCallbackHandler):
@@ -167,3 +167,4 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+

@@ -41,7 +41,7 @@ if not api_key:
 
 # --- MODEL SELECTION ---
 model_options = ["llama-3.3-70b-versatile"]
-selected_model = st.sidebar.selectbox("🧠 Choose Model", options=model_options, index=0)
+selected_model = st.sidebar.selectbox("🧠  Model Using ", options=model_options, index=0)
 
 
 
@@ -170,8 +170,8 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
         {"role": "assistant", "content": (
             "👋 How can I help you with your Company database today?\n\n"
             "**Here are some example questions you can ask:**\n"
-            "- Show all employees in the company.db\n"
-            "- List products with price greater than 100"
+            "Show all employees in the company.db\n"
+            "Name all the departments in the company"
         )}
     ]
 
@@ -211,6 +211,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

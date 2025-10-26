@@ -77,46 +77,62 @@ st.markdown("""
 <style>
 /* === SIDEBAR === */
 [data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #4338ca, #7c3aed);
+  background: linear-gradient(180deg, #4338ca, #7c3aed); /* Darker purple gradient */
   border-right: 2px solid #a5b4fc;
 }
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3,
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p {
-  color: #f9fafb;
+  color: #f9fafb; /* Soft white text */
   font-weight: 600;
 }
+
+/* === SIDEBAR MODEL SELECTBOX === */
 [data-testid="stSidebar"] label {
   color: #ffffff !important;
   font-size: 18px !important;
   font-weight: 700;
 }
+
+/* === SIDEBAR CLEAR HISTORY BUTTON === */
 [data-testid="stSidebar"] button[kind="secondary"] {
   color: #f9fafb !important;
   background-color: transparent !important;
   border: 2px solid #f9fafb !important;
   font-weight: 600 !important;
+  border-radius: 8px !important; /* Added rounded corners */
 }
 [data-testid="stSidebar"] button[kind="secondary"]:hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* === EXPANDER HELP BOX === */
-[data-testid="stSidebar"] [data-testid="stExpander"] div[role="button"] {
-  color: #ffffff !important;
+/* === SIDEBAR HELP EXPANDER === */
+/* This styles the expander header to look like the button */
+[data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Light transparent bg */
+    color: #ffffff !important;
+    border: 1px solid #f9fafb !important; /* White border */
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 10px 12px !important;
 }
+[data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"]:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important; /* Darker on hover */
+}
+/* This styles the content box *inside* the expander */
 [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
-  background-color: rgba(255, 255, 255, 0.15);
-  padding: 10px;
-  border-radius: 8px;
-  color: #f1f5f9;
+    background-color: rgba(0, 0, 0, 0.2) !important; /* Dark transparent bg */
+    color: #f1f5f9 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    margin-top: 5px;
 }
 
 /* === CHAT BUBBLES === */
 .chat-left {
   background-color: #e0f2fe;  /* light blue */
-  color: #1e3a8a;            /* dark text */
+  color: #1e3a8a;             /* dark text */
   border-radius: 10px;
   padding: 10px 15px;
   margin: 5px 0;
@@ -133,6 +149,8 @@ st.markdown("""
   text-align: left;
   margin-left: auto;
 }
+
+/* === MAIN PAGE TITLE === */
 h1, h2, h3, h4 {
   color: #2563eb;
   font-size: 1.8rem;
@@ -152,27 +170,6 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
 # --- HELP SECTION --
 with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     st.markdown("""
-    <style>
-    /* Make the expander header like model selectbox */
-    [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
-        background-color: #000000 !important;  /* black header */
-        color: #ffffff !important;             /* white text */
-        padding: 10px 12px !important;
-        border-radius: 8px !important;
-        border: 1px solid #7c3aed !important; /* optional purple border to match style */
-        font-weight: 600 !important;
-    }
-
-    /* Expander content box */
-    [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
-        background-color: #1f1f1f;   /* dark gray background for content */
-        color: #f8fafc;              /* light text */
-        padding: 12px;
-        border-radius: 8px;
-        margin-top: 5px;
-    }
-    </style>
-
     <div>
     <b>💡 You can ask questions like:</b><br>
     📊 <i>Show all employees in the Sales department</i><br>
@@ -227,6 +224,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 
 
 

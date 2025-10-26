@@ -25,8 +25,8 @@ class StreamlitCallbackHandler(BaseCallbackHandler):
 
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Langchain Chat with SQLite Database", page_icon="💬", layout="wide")
-st.title("💬 Langchain Chat with SQLite DB")
+st.set_page_config(page_title="Langchain Chat with Company Database", page_icon="💬", layout="wide")
+st.title("💬 Langchain Chat with Company DB")
 
 
 # --- LOAD ENV ---
@@ -181,7 +181,7 @@ for msg in st.session_state["messages"]:
 
 
 # --- USER INPUT ---
-user_query = st.chat_input(placeholder="Ask anything from the SQLite database...")
+user_query = st.chat_input(placeholder="Ask anything from the SQLite database")
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
@@ -206,6 +206,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

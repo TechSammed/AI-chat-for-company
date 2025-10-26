@@ -69,69 +69,106 @@ agent = create_sql_agent(
 # --- STYLING ---
 st.markdown("""
 <style>
+/* --- SIDEBAR STYLES --- */
 [data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #6366f1, #8b5cf6);
-border-right: 2px solid #a5b4fc;
-            }
-[data-testid="stSidebar"] h2, 
+ background: linear-gradient(180deg, #6366f1, #8b5cf6);
+ border-right: 2px solid #a5b4fc;
+}
+[data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] label, 
+[data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p {
-    color: #f9fafb;  /* Soft white */
-    font-weight: 600;
+ color: #f9fafb;
+ font-weight: 600;
 }
-
-/* Style for the sidebar selectbox label */
 [data-testid="stSidebar"] label {
-    color: #ffffff !important;    /* change color */
-    font-size: 18px !important;   /* change size */
-    font-weight: 700;             /* make it bold */
+ color: #ffffff !important;
+ font-size: 18px !important;
+ font-weight: 700;
 }
-
-/* Make sidebar button always visible on your gradient */
-            
 [data-testid="stSidebar"] button[kind="secondary"] {
-    color: #f9fafb !important;      
-    background-color: transparent !important; 
-    border: 2px solid #f9fafb !important;    
-    font-weight: 600 !important;   
+ color: #f9fafb !important;
+ background-color: transparent !important;
+ border: 2px solid #f9fafb !important;
+ font-weight: 600 !important;
 }
 [data-testid="stSidebar"] button[kind="secondary"]:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Optional hover effect */
+ background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-         
-.chat-left {
-    background-color: #e5f1fb;
-    color: #1f2937;
-    border-radius: 10px;
+/* --- CHAT BUBBLE STYLES (FIXED WIDTH) --- */
+[data-testid="stChatMessage"] {
+    display: inline-flex !important; /* makes bubble shrink to text size */
+    align-self: flex-start;
     padding: 10px 15px;
-    margin: 5px 0;
+    border-radius: 12px;
+    margin: 6px 0;
     max-width: 70%;
-    text-align: left;
+    word-wrap: break-word;
 }
-.chat-right {
+
+/* User message bubble */
+[data-testid="stChatMessage"][data-testid="chat-avatar-user"] {
+    margin-left: auto;
+    align-self: flex-end;
     background-color: #dbeafe;
     color: #1f2937;
-    border-radius: 10px;
-    padding: 10px 15px;
-    margin: 5px 0;
-    max-width: 70%;
-    text-align: left;
-    margin-left: auto;
+    justify-content: flex-end;
+    text-align: right;
+    width: fit-content !important;
 }
+
+/* Assistant message bubble */
+[data-testid="stChatMessage"][data-testid="chat-avatar-assistant"] {
+    margin-right: auto;
+    background-color: #e5f1fb;
+    color: #1f2937;
+    width: fit-content !important;
+}
+
+/* --- TITLE AND HR STYLES --- */
 h1, h2, h3, h4 {
-    color: #2563eb;
-    font-size: 1.8rem; 
+ color: #2563eb;
+ font-size: 1.8rem;
+}
+hr {
+    border: none; 
+    height: 2px; 
+    background: #dbeafe; 
+    margin-top: -10px; 
+    margin-bottom: 20px;
 }
 </style>
-<hr style="border: none; height: 2px; background: #dbeafe; margin-top: -10px; margin-bottom: 20px">
+<hr>
 """, unsafe_allow_html=True)
-
 # --- INITIAL CHAT SESSION ---
 if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
     st.session_state["messages"] = [{"role": "assistant", "content": "👋 How can I help you with your SQLite database today?"}]
 
+with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
+    st.markdown("""
+    <div style="
+        background-color: rgba(0, 0, 0, 0.25);
+        padding: 12px;
+        border-radius: 8px;
+        color: #f8fafc;
+        font-size: 15px;
+        line-height: 1.6;
+    ">
+    <b>💡 You can ask questions like:</b><br>
+    📊 <i>Show all employees in the Sales department</i><br>
+    💰 <i>What is the average salary in each department?</i><br>
+    👥 <i>Name the employee with highest salary</i><br>
+    🏢 <i>How many departments does the company have?</i><br>
+    ⏰ <i>Which employees have experience greater than 5 years?</i><br><br>
+
+    <b>📝 Notes:</b><br>
+    - Uses your <b>SQLite company.db</b> file.<br>
+    - ❌ Commands like <code>DROP</code>, <code>DELETE</code>, <code>UPDATE</code>, <code>INSERT</code>, <code>ALTER</code> are blocked.<br>
+    - ✅ Only <b>SELECT</b>-type (read-only) queries are allowed.<br>
+    - 💬 Ask naturally — the AI converts English to SQL automatically.
+    </div>
+    """, unsafe_allow_html=True)
 # Display previous messages
 for msg in st.session_state["messages"]:
     if msg["role"] == "user":
@@ -167,6 +204,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 
 
 

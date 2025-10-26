@@ -169,25 +169,6 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
     ]
 
 
-# --- HELP SECTION ---
-with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
-    st.markdown("""
-    <div>
-    <b>💡 You can ask questions like:</b><br>
-    📊 <i>Show all employees in the Sales department</i><br>
-    💰 <i>What is the average salary in each department?</i><br>
-    👥 <i>Name the employee with highest salary</i><br>
-    🏢 <i>How many departments does the company have?</i><br>
-    ⏰ <i>Which employees have experience greater than 5 years?</i><br><br>
-
-    <b>📝 Notes:</b><br>
-    - Uses your <b>SQLite company.db</b> file.<br>
-    - ❌ Commands like <code>DROP</code>, <code>DELETE</code>, <code>UPDATE</code>, <code>INSERT</code>, <code>ALTER</code> are blocked.<br>
-    - ✅ Only <b>SELECT</b>-type (read-only) queries are allowed.<br>
-    - 💬 Ask naturally — the AI converts English to SQL automatically.
-    </div>
-    """, unsafe_allow_html=True)
-
 
 # --- DISPLAY CHAT HISTORY ---
 for msg in st.session_state["messages"]:
@@ -223,3 +204,4 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+

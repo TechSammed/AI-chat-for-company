@@ -214,13 +214,12 @@ if user_query:
             except Exception as e:
                 if "token limit" in str(e).lower():
                     st.warning("⚠️ Token limit reached. Please shorten your query or clear some history.")
-                else:
-                    response = f"⚠️ An error occurred: {e}"
-                    st.error(response)
+               
 
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

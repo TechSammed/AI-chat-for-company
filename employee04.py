@@ -150,16 +150,14 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
 
 
 # --- HELP SECTION ---
-
 with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     st.markdown("""
     <div style="
-        background: #1e1b4b; /* Deep solid purple-blue background */
-        padding: 14px;
-        border-radius: 10px;
-        border: 1px solid #a78bfa; /* Light purple border */
-        box-shadow: 0 0 8px rgba(167, 139, 250, 0.4); /* soft glow */
-        color: #f8fafc;
+        background-color: #1f2937;  /* dark gray / almost black */
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1px solid #4b5563;  /* slightly lighter gray border */
+        color: #f9fafb;              /* soft white text */
         font-size: 15px;
         line-height: 1.6;
     ">
@@ -177,6 +175,7 @@ with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     - 💬 Ask naturally — the AI converts English to SQL automatically.
     </div>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -214,4 +213,5 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 

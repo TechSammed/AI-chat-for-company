@@ -43,20 +43,7 @@ if not api_key:
 model_options = ["llama-3.3-70b-versatile"]
 selected_model = st.sidebar.selectbox("🧠 Choose Model", options=model_options, index=0)
 
-with st.sidebar.expander("💡 Types of Questions You Can Ask", expanded=True):
-    st.markdown("""
-    <div style="color: white;">
-    **Here are some example queries you can try:**
-    
-    - `Show all employees in the company.db`  
-    - `List products with price greater than 100`  
-    - `How many orders were placed last month?`  
-    - `Show me customers from New York`  
-    - `What is the average salary of employees?`  
-    - `Count the number of entries in a table`  
-    - `List all records where column X = 'value'`  
-    </div>
-    """, unsafe_allow_html=True)
+
 
 
 # --- LLM CONFIG ---
@@ -219,5 +206,6 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 

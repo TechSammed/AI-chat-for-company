@@ -212,12 +212,16 @@ if user_query:
                 response_dict = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
                 response = response_dict["output"]
             except Exception as e:
-                response = f"⚠️ An error occurred: {e}"
-                st.error(response)
+                if "token limit" in str(e).lower():
+                    st.warning("⚠️ Token limit reached. Please shorten your query or clear some history.")
+                else:
+                    response = f"⚠️ An error occurred: {e}"
+                    st.error(response)
 
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

@@ -77,50 +77,51 @@ st.markdown("""
 <style>
 /* === SIDEBAR === */
 [data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #4338ca, #7c3aed); /* Darker purple gradient */
+  background: linear-gradient(180deg, #4338ca, #7c3aed); /* Dark purple gradient */
   border-right: 2px solid #a5b4fc;
 }
+
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3,
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p {
-  color: #f9fafb; /* Soft white text */
+  color: #f9fafb !important; /* Soft white text */
   font-weight: 600;
 }
 
-/* === SIDEBAR MODEL SELECTBOX === */
+/* Sidebar selectbox */
 [data-testid="stSidebar"] label {
   color: #ffffff !important;
   font-size: 18px !important;
   font-weight: 700;
 }
 
-/* === SIDEBAR CLEAR HISTORY BUTTON === */
+/* Sidebar clear history button */
 [data-testid="stSidebar"] button[kind="secondary"] {
   color: #f9fafb !important;
   background-color: transparent !important;
   border: 2px solid #f9fafb !important;
   font-weight: 600 !important;
-  border-radius: 8px !important; /* Added rounded corners */
+  border-radius: 8px !important;
 }
 [data-testid="stSidebar"] button[kind="secondary"]:hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* === SIDEBAR HELP EXPANDER === */
-/* This styles the expander header to look like the button */
+/* Sidebar help expander header (like black button) */
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Light transparent bg */
+    background-color: #000000 !important; /* Black background */
     color: #ffffff !important;
-    border: 1px solid #f9fafb !important; /* White border */
     border-radius: 8px !important;
     font-weight: 600 !important;
     padding: 10px 12px !important;
+    border: 1px solid #f9fafb !important;
 }
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"]:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important; /* Darker on hover */
+    background-color: rgba(255, 255, 255, 0.15) !important;
 }
-/* This styles the content box *inside* the expander */
+
+/* Sidebar help expander content */
 [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
     background-color: rgba(0, 0, 0, 0.2) !important; /* Dark transparent bg */
     color: #f1f5f9 !important;
@@ -129,19 +130,20 @@ st.markdown("""
     margin-top: 5px;
 }
 
-/* === CHAT BUBBLES === */
+/* Chat bubbles */
 .chat-left {
-  background-color: #e0f2fe;  /* light blue */
-  color: #1e3a8a;             /* dark text */
+  background-color: #dbeafe !important;  /* assistant bubble */
+  color: #1e3a8a !important;
   border-radius: 10px;
   padding: 10px 15px;
   margin: 5px 0;
   max-width: 70%;
   text-align: left;
 }
+
 .chat-right {
-  background-color: #dbeafe; /* soft blue */
-  color: #1e3a8a;
+  background-color: #e0f2fe !important;  /* user bubble */
+  color: #1e3a8a !important;
   border-radius: 10px;
   padding: 10px 15px;
   margin: 5px 0;
@@ -150,7 +152,7 @@ st.markdown("""
   margin-left: auto;
 }
 
-/* === MAIN PAGE TITLE === */
+/* Main page title */
 h1, h2, h3, h4 {
   color: #2563eb;
   font-size: 1.8rem;
@@ -167,7 +169,7 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
     ]
 
 
-# --- HELP SECTION --
+# --- HELP SECTION ---
 with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     st.markdown("""
     <div>
@@ -187,15 +189,12 @@ with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     """, unsafe_allow_html=True)
 
 
-
-
-
 # --- DISPLAY CHAT HISTORY ---
 for msg in st.session_state["messages"]:
     if msg["role"] == "user":
-        st.markdown(f'<div class="chat-left">{msg["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="chat-right">{msg["content"]}</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class.chat-right">{msg["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="chat-left">{msg["content"]}</div>', unsafe_allow_html=True)
 
 
 # --- USER INPUT ---
@@ -203,7 +202,7 @@ user_query = st.chat_input(placeholder="Ask anything from the SQLite database...
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
-    st.markdown(f'<div class.chat-left">{user_query}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="chat-right">{user_query}</div>', unsafe_allow_html=True)
 
     response = None
     forbidden_commands = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
@@ -223,4 +222,4 @@ if user_query:
 
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
-        st_callback_container.markdown(response)
+        st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)

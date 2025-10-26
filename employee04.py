@@ -25,8 +25,8 @@ class StreamlitCallbackHandler(BaseCallbackHandler):
 
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="AI Company Analyst", page_icon="💬", layout="wide")
-st.title("💬 AI Company Analyst")
+st.set_page_config(page_title="Langchain Chat with SQLite Database", page_icon="💬", layout="wide")
+st.title("💬 Langchain Chat with SQLite DB")
 
 
 # --- LOAD ENV ---
@@ -108,6 +108,7 @@ st.markdown("""
 }
 
 /* === SIDEBAR HELP EXPANDER === */
+/* This styles the expander header to look like the button */
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
     background-color: rgba(255, 255, 255, 0.1) !important; /* Light transparent bg */
     color: #ffffff !important;
@@ -119,6 +120,7 @@ st.markdown("""
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"]:hover {
     background-color: rgba(255, 255, 255, 0.2) !important; /* Darker on hover */
 }
+/* This styles the content box *inside* the expander */
 [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
     background-color: rgba(0, 0, 0, 0.2) !important; /* Dark transparent bg */
     color: #f1f5f9 !important;
@@ -127,24 +129,25 @@ st.markdown("""
     margin-top: 5px;
 }
 
-/* === NATIVE CHAT BUBBLES (Replaces .chat-left/.chat-right) === */
-[data-testid="stChatMessage"] {
-    max-width: 70%;
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 5px;
+/* === CHAT BUBBLES === */
+.chat-left {
+  background-color: #e0f2fe;  /* light blue */
+  color: #1e3a8a;             /* dark text */
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 5px 0;
+  max-width: 70%;
+  text-align: left;
 }
-/* User (Left) */
-[data-testid="stChatMessage"][data-testid="chat-avatar-user"] {
-    margin-right: auto;
-    background-color: #e0f2fe;
-    color: #1e3a8a;
-}
-/* Assistant (Right) */
-[data-testid="stChatMessage"][data-testid="chat-avatar-assistant"] {
-    margin-left: auto;
-    background-color: #dbeafe;
-    color: #1e3a8a;
+.chat-right {
+  background-color: #dbeafe; /* soft blue */
+  color: #1e3a8a;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin: 5px 0;
+  max-width: 70%;
+  text-align: left;
+  margin-left: auto;
 }
 
 /* === MAIN PAGE TITLE === */
@@ -160,13 +163,14 @@ h1, h2, h3, h4 {
 # --- INITIAL CHAT SESSION ---
 if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
     st.session_state["messages"] = [
-        {"role": "assistant", "content": "👋 How can I help you with your company database today?"}
+        {"role": "assistant", "content": "👋 How can I help you with your SQLite database today?"}
     ]
 
 
 # --- HELP SECTION --
 with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     st.markdown("""
+    <div>
     <b>💡 You can ask questions like:</b><br>
     📊 <i>Show all employees in the Sales department</i><br>
     💰 <i>What is the average salary in each department?</i><br>
@@ -179,49 +183,44 @@ with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     - ❌ Commands like <code>DROP</code>, <code>DELETE</code>, <code>UPDATE</code>, <code>INSERT</code>, <code>ALTER</code> are blocked.<br>
     - ✅ Only <b>SELECT</b>-type (read-only) queries are allowed.<br>
     - 💬 Ask naturally — the AI converts English to SQL automatically.
+    </div>
     """, unsafe_allow_html=True)
 
 
+
+
+
 # --- DISPLAY CHAT HISTORY ---
-# (Updated to use native st.chat_message)
 for msg in st.session_state["messages"]:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+    if msg["role"] == "user":
+        st.markdown(f'<div class="chat-left">{msg["content"]}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class.chat-right">{msg["content"]}</div>', unsafe_allow_html=True)
 
 
 # --- USER INPUT ---
-# (Updated to use native st.chat_message and cleaner logic)
 user_query = st.chat_input(placeholder="Ask anything from the SQLite database...")
 
 if user_query:
-    # Add user message to session state and display it
     st.session_state["messages"].append({"role": "user", "content": user_query})
-    with st.chat_message("user"):
-        st.markdown(user_query)
+    st.markdown(f'<div class.chat-left">{user_query}</div>', unsafe_allow_html=True)
 
+    response = None
     forbidden_commands = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
-    
-    # Check for forbidden commands
+
     if any(cmd in user_query.upper() for cmd in forbidden_commands):
-        response = "⚠️ Destructive queries are not allowed."
-        with st.chat_message("assistant"):
-            st.warning(response)
-        st.session_state["messages"].append({"role": "assistant", "content": response})
-    
-    # If allowed, run the agent
+        st.warning("⚠️ Destructive queries are not allowed.")
     else:
         with st.chat_message("assistant"):
             st_callback_container = st.empty()
             streamlit_callback = StreamlitCallbackHandler(st_callback_container)
             try:
-                response_dict = agent.invoke(
-                    {"input": user_query}, 
-                    callbacks=[streamlit_callback]
-                )
+                response_dict = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
                 response = response_dict["output"]
             except Exception as e:
                 response = f"⚠️ An error occurred: {e}"
-            
-            # Display the final response (or error) and add to history
-            st_callback_container.markdown(response)
-            st.session_state["messages"].append({"role": "assistant", "content": response})
+                st.error(response)
+
+    if response:
+        st.session_state["messages"].append({"role": "assistant", "content": response})
+        st_callback_container.markdown(response)

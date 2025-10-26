@@ -175,8 +175,11 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
 # --- EXAMPLE QUESTIONS ---
 st.sidebar.markdown("**💡 Example Questions:**")
 st.sidebar.markdown(
-    "- Show all employees in the company.db  \n"
-    "- Name all the departments in the company"
+    "- Show all employees list in the  company.db  \n"
+    "- Name all the departments in the company \n"
+    "- How many employees are there in the compnay \n"
+    "- Name the employee who has highest salary"
+    
 )
 
 
@@ -215,6 +218,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

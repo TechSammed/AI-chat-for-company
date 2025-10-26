@@ -69,77 +69,63 @@ agent = create_sql_agent(
 # --- STYLING ---
 st.markdown("""
 <style>
-/* --- SIDEBAR STYLES --- */
 [data-testid="stSidebar"] {
- background: linear-gradient(180deg, #6366f1, #8b5cf6);
- border-right: 2px solid #a5b4fc;
-}
-[data-testid="stSidebar"] h2,
+  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+border-right: 2px solid #a5b4fc;
+            }
+[data-testid="stSidebar"] h2, 
 [data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] label, 
 [data-testid="stSidebar"] p {
- color: #f9fafb;
- font-weight: 600;
+    color: #f9fafb;  /* Soft white */
+    font-weight: 600;
 }
+
+/* Style for the sidebar selectbox label */
 [data-testid="stSidebar"] label {
- color: #ffffff !important;
- font-size: 18px !important;
- font-weight: 700;
+    color: #ffffff !important;    /* change color */
+    font-size: 18px !important;   /* change size */
+    font-weight: 700;             /* make it bold */
 }
+
+/* Make sidebar button always visible on your gradient */
+            
 [data-testid="stSidebar"] button[kind="secondary"] {
- color: #f9fafb !important;
- background-color: transparent !important;
- border: 2px solid #f9fafb !important;
- font-weight: 600 !important;
+    color: #f9fafb !important;      
+    background-color: transparent !important; 
+    border: 2px solid #f9fafb !important;    
+    font-weight: 600 !important;   
 }
 [data-testid="stSidebar"] button[kind="secondary"]:hover {
- background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Optional hover effect */
 }
 
-/* --- CHAT BUBBLE STYLES (FIXED WIDTH) --- */
-[data-testid="stChatMessage"] {
-    display: inline-flex !important; /* makes bubble shrink to text size */
-    align-self: flex-start;
-    padding: 10px 15px;
-    border-radius: 12px;
-    margin: 6px 0;
-    max-width: 70%;
-    word-wrap: break-word;
+         
+.chat-left {
+    background-color: #e5f1fb;
+    color: #1f2937;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 5px 0;
+    max-width: 70%;
+    text-align: left;
 }
-
-/* User message bubble */
-[data-testid="stChatMessage"][data-testid="chat-avatar-user"] {
-    margin-left: auto;
-    align-self: flex-end;
-    background-color: #dbeafe;
-    color: #1f2937;
-    justify-content: flex-end;
-    text-align: right;
-    width: fit-content !important;
+.chat-right {
+    background-color: #dbeafe;
+    color: #1f2937;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 5px 0;
+    max-width: 70%;
+    text-align: left;
+    margin-left: auto;
 }
-
-/* Assistant message bubble */
-[data-testid="stChatMessage"][data-testid="chat-avatar-assistant"] {
-    margin-right: auto;
-    background-color: #e5f1fb;
-    color: #1f2937;
-    width: fit-content !important;
-}
-
-/* --- TITLE AND HR STYLES --- */
 h1, h2, h3, h4 {
- color: #2563eb;
- font-size: 1.8rem;
-}
-hr {
-    border: none; 
-    height: 2px; 
-    background: #dbeafe; 
-    margin-top: -10px; 
-    margin-bottom: 20px;
+    color: #2563eb;
+    font-size: 1.8rem; 
 }
 </style>
-<hr>
+<hr style="border: none; height: 2px; background: #dbeafe; margin-top: -10px; margin-bottom: 20px">
 """, unsafe_allow_html=True)
 # --- INITIAL CHAT SESSION ---
 if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
@@ -204,6 +190,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 
 
 

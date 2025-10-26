@@ -149,18 +149,31 @@ if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message h
     ]
 
 
-# --- HELP SECTION ---
+# --- HELP SECTION --
 with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     st.markdown("""
-    <div style="
-        background-color: #1f2937;  /* dark gray / almost black */
-        padding: 12px 14px;
+    <style>
+    /* Make the expander header like model selectbox */
+    [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
+        background-color: #000000 !important;  /* black header */
+        color: #ffffff !important;             /* white text */
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+        border: 1px solid #7c3aed !important; /* optional purple border to match style */
+        font-weight: 600 !important;
+    }
+
+    /* Expander content box */
+    [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
+        background-color: #1f1f1f;   /* dark gray background for content */
+        color: #f8fafc;              /* light text */
+        padding: 12px;
         border-radius: 8px;
-        border: 1px solid #4b5563;  /* slightly lighter gray border */
-        color: #f9fafb;              /* soft white text */
-        font-size: 15px;
-        line-height: 1.6;
-    ">
+        margin-top: 5px;
+    }
+    </style>
+
+    <div>
     <b>💡 You can ask questions like:</b><br>
     📊 <i>Show all employees in the Sales department</i><br>
     💰 <i>What is the average salary in each department?</i><br>
@@ -175,6 +188,7 @@ with st.sidebar.expander("ℹ️ How to use this chat", expanded=False):
     - 💬 Ask naturally — the AI converts English to SQL automatically.
     </div>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -213,5 +227,6 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 
 

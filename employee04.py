@@ -23,8 +23,8 @@ class StreamlitCallbackHandler(BaseCallbackHandler):
         self.container.markdown(self.text)
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="SmartDB Assistant", page_icon="💬", layout="wide")
-st.title("💬SmartDB Assistant")
+st.set_page_config(page_title="💬 Langchain Chat with SQLite Database", page_icon="💬", layout="wide")
+st.title("💬 Langchain Chat with SQLite Database")
 
 # --- LOAD ENV ---
 load_dotenv()
@@ -167,6 +167,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(response)
+
 
 
 

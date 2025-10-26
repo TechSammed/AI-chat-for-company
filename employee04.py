@@ -167,7 +167,7 @@ h1, h2, h3, h4 {
 # --- INITIAL CHAT SESSION ---
 if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
     st.session_state["messages"] = [
-        {"role": "assistant", "content": "👋 How can I help you with your SQLite database today?"}
+        {"role": "assistant", "content": "👋 How can I help you with your Company database today?"}
     ]
 
 
@@ -181,7 +181,7 @@ for msg in st.session_state["messages"]:
 
 
 # --- USER INPUT ---
-user_query = st.chat_input(placeholder="Ask anything from the SQLite database")
+user_query = st.chat_input(placeholder="Ask anything from the Company database")
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
@@ -206,6 +206,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

@@ -11,13 +11,13 @@ Powered by LLMs (like Groq LLaMA 3 or GPT models), it converts user questions in
 ## 🖥️ Demo Preview
 
 ### Home Screen
-![App Screenshot](assets/ui_home.png)
+![App Screenshot](comapny_data_images/img02.png)
 
 ### Query Example
-![Query Example](assets/query_example.png)
+![Query Example](comapny_data_images/img03.png)
 
 ### Live Chat Demo
-![Chat Demo](assets/chat_demo.gif)
+![Chat Demo](comapny_data_images/img01.png)
 
 
 ## 🚀 Features

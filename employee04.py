@@ -31,7 +31,7 @@ st.title("💬  Chat with Company DB")
 
 # --- LOAD ENV ---
 load_dotenv()
-api_key = os.getenv("GROQ_API_KEY")
+api_key = os.getenv("GROQ_API_KEY_02")
 
 # --- VALIDATION ---
 if not api_key:
@@ -222,6 +222,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

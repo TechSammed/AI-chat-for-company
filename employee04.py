@@ -215,13 +215,14 @@ if user_query:
                 if "token limit" in str(e).lower():
                     st.warning("⚠️ Token limit reached. Please visit after some time ")
                 else:
-                    response = "⚠️ Token limit reached. Please visit after some time"
+                    st.warning("⚠️ Token limit reached. Please visit after some time ")
                    
                
 
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

@@ -193,7 +193,7 @@ for msg in st.session_state["messages"]:
 
 
 # --- USER INPUT ---
-user_query = st.chat_input(placeholder="Ask anything from the Company database")
+user_query = st.chat_input(placeholder="Ask anything About  Company ")
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
@@ -222,6 +222,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

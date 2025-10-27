@@ -8,6 +8,18 @@ Powered by LLMs (like Groq LLaMA 3 or GPT models), it converts user questions in
 
 ---
 
+## 🖥️ Demo Preview
+
+### Home Screen
+![App Screenshot](assets/ui_home.png)
+
+### Query Example
+![Query Example](assets/query_example.png)
+
+### Live Chat Demo
+![Chat Demo](assets/chat_demo.gif)
+
+
 ## 🚀 Features
 - 💬 **Natural Language Chat Interface** – Query the database using plain English.
 - ⚙️ **AI Query Understanding** – Uses LLMs to interpret and generate SQL.

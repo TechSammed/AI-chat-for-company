@@ -9,6 +9,8 @@ from langchain_groq import ChatGroq
 from langchain_community.agent_toolkits.sql.base import create_sql_agent, SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
 from langchain_core.callbacks.base import BaseCallbackHandler
+from langchain.prompts import PromptTemplate
+from langchain.agents import AgentType
 
 
 # --- CUSTOM STREAMLIT CALLBACK HANDLER ---
@@ -45,8 +47,6 @@ model_options = ["llama-3.3-70b-versatile"]
 selected_model = st.sidebar.selectbox("🧠  Model Using ", options=model_options, index=0)
 
 
-
-
 # --- LLM CONFIG ---
 llm = ChatGroq(
     groq_api_key=api_key,
@@ -63,6 +63,12 @@ def configur_db():
 
 db = configur_db()
 
+sql_prompt = PromptTemplate.from_template("""
+You are an SQL expert. Always generate SQLite-compatible queries.
+Return clean answers with explanations.
+
+User question: {input}
+""")
 
 # --- TOOLKIT AND AGENT ---
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
@@ -70,6 +76,7 @@ agent = create_sql_agent(
     llm=llm,
     toolkit=toolkit,
     verbose=True,
+    prompt=sql_prompt,
     agent_type="zero-shot-react-description",
     handle_parsing_errors=True
 )
@@ -223,6 +230,7 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+
 
 
 

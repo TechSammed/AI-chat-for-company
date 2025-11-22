@@ -10,7 +10,6 @@ from langchain_community.agent_toolkits.sql.base import create_sql_agent, SQLDat
 from langchain_community.utilities import SQLDatabase
 from langchain_core.callbacks.base import BaseCallbackHandler
 
-
 # --- CUSTOM STREAMLIT CALLBACK HANDLER ---
 class StreamlitCallbackHandler(BaseCallbackHandler):
     """Custom Streamlit callback handler for streaming responses."""
@@ -223,3 +222,4 @@ if user_query:
     if response:
         st.session_state["messages"].append({"role": "assistant", "content": response})
         st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+

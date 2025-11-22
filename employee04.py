@@ -9,8 +9,6 @@ from langchain_groq import ChatGroq
 from langchain_community.agent_toolkits.sql.base import create_sql_agent, SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
 from langchain_core.callbacks.base import BaseCallbackHandler
-from langchain.prompts import PromptTemplate
-from langchain.agents import AgentType
 
 
 # --- CUSTOM STREAMLIT CALLBACK HANDLER ---
@@ -47,6 +45,8 @@ model_options = ["llama-3.3-70b-versatile"]
 selected_model = st.sidebar.selectbox("🧠  Model Using ", options=model_options, index=0)
 
 
+
+
 # --- LLM CONFIG ---
 llm = ChatGroq(
     groq_api_key=api_key,
@@ -63,11 +63,6 @@ def configur_db():
 
 db = configur_db()
 
-sql_prompt = PromptTemplate.from_template("""
-You are an SQL expert. Always generate SQLite-compatible queries.
-Return clean answers with explanations.
-User question: {input}
-""")
 
 # --- TOOLKIT AND AGENT ---
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
@@ -75,7 +70,6 @@ agent = create_sql_agent(
     llm=llm,
     toolkit=toolkit,
     verbose=True,
-    prompt=sql_prompt,
     agent_type="zero-shot-react-description",
     handle_parsing_errors=True
 )
@@ -198,10 +192,6 @@ for msg in st.session_state["messages"]:
     else:
         st.markdown(f'<div class="chat-left">{msg["content"]}</div>', unsafe_allow_html=True)
 
-def is_sql_query(text):
-    sql_keywords = ["SELECT", "FROM", "WHERE", "JOIN", "SHOW", "COUNT", "GROUP BY", "ORDER BY"]
-    return any(keyword in text.upper() for keyword in sql_keywords)
-
 
 # --- USER INPUT ---
 user_query = st.chat_input(placeholder="Ask anything About  Company ")
@@ -211,25 +201,10 @@ if user_query:
     st.markdown(f'<div class="chat-right">{user_query}</div>', unsafe_allow_html=True)
 
     response = None
-
     forbidden_commands = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
 
-    # 1️⃣ BLOCK DANGEROUS SQL COMMANDS
     if any(cmd in user_query.upper() for cmd in forbidden_commands):
         st.warning("⚠️ Destructive queries are not allowed.")
-
-    # 2️⃣ FALLBACK → NORMAL CHATBOT FOR NON-SQL QUESTIONS
-    elif not is_sql_query(user_query):
-        with st.chat_message("assistant"):
-            st_callback_container = st.empty()
-            reply = llm.invoke(
-            f"You are Alpha Assist, a friendly assistant. "
-            f"Answer this nicely and helpfully:\n\n{user_query}"
-            ).content
-            st_callback_container.markdown(reply)
-            st.session_state["messages"].append({"role": "assistant", "content": reply})
-
-    # 3️⃣ SQL AGENT HANDLING
     else:
         with st.chat_message("assistant"):
             st_callback_container = st.empty()
@@ -238,15 +213,13 @@ if user_query:
                 response_dict = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
                 response = response_dict["output"]
             except Exception as e:
-                st.warning("⚠️ Something went wrong. Try again.")
-
-        if response:
-            st.session_state["messages"].append({"role": "assistant", "content": response})
-            st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
-
+                if "token limit" in str(e).lower():
+                    st.warning("⚠️ Token limit reached. Please visit after some time ")
+                else:
+                    st.warning("⚠️ Token limit reached. Please visit after some time ")
                    
                
 
-   
-
-
+    if response:
+        st.session_state["messages"].append({"role": "assistant", "content": response})
+        st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)

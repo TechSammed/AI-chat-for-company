@@ -222,10 +222,10 @@ if user_query:
     elif not is_sql_query(user_query):
         with st.chat_message("assistant"):
             st_callback_container = st.empty()
-            reply = llm.predict(
-                f"You are Alpha Assist, a friendly assistant. "
-                f"Answer this nicely and helpfully:\n\n{user_query}"
-            )
+            reply = llm.invoke(
+            f"You are Alpha Assist, a friendly assistant. "
+            f"Answer this nicely and helpfully:\n\n{user_query}"
+            ).content
             st_callback_container.markdown(reply)
             st.session_state["messages"].append({"role": "assistant", "content": reply})
 
@@ -248,4 +248,5 @@ if user_query:
                
 
    
+
 

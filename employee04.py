@@ -24,12 +24,11 @@ class StreamlitCallbackHandler(BaseCallbackHandler):
 
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title=" Chat with Company DB", page_icon="💬", layout="wide")
-st.title("💬  Alpha Assist")
+st.set_page_config(page_title="Chat with Company DB", page_icon="💬", layout="wide")
+st.title("💬 Alpha Assist")
 
 
 # --- LOAD ENV ---
-## -- Used an second groq api
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 
@@ -42,8 +41,6 @@ if not api_key:
 # --- MODEL SELECTION ---
 model_options = ["llama-3.3-70b-versatile"]
 selected_model = st.sidebar.selectbox("🧠  Model Using ", options=model_options, index=0)
-
-
 
 
 # --- LLM CONFIG ---
@@ -77,28 +74,22 @@ agent = create_sql_agent(
 # --- STYLING ---
 st.markdown("""
 <style>
-/* === SIDEBAR === */
 [data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #4338ca, #7c3aed); /* Dark purple gradient */
+  background: linear-gradient(180deg, #4338ca, #7c3aed);
   border-right: 2px solid #a5b4fc;
 }
-
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3,
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p {
-  color: #f9fafb !important; /* Soft white text */
+  color: #f9fafb !important;
   font-weight: 600;
 }
-
-/* Sidebar selectbox */
 [data-testid="stSidebar"] label {
   color: #ffffff !important;
   font-size: 18px !important;
   font-weight: 700;
 }
-
-/* Sidebar clear history button */
 [data-testid="stSidebar"] button[kind="secondary"] {
   color: #f9fafb !important;
   background-color: transparent !important;
@@ -109,32 +100,26 @@ st.markdown("""
 [data-testid="stSidebar"] button[kind="secondary"]:hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
 }
-
-/* Sidebar help expander header (like black button) */
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
-    background-color: #000000 !important; /* Black background */
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    padding: 10px 12px !important;
-    border: 1px solid #f9fafb !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 10px 12px !important;
+  border: 1px solid #f9fafb !important;
 }
 [data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"]:hover {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
 }
-
-/* Sidebar help expander content */
 [data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
-    background-color: rgba(0, 0, 0, 0.2) !important; /* Dark transparent bg */
-    color: #f1f5f9 !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    margin-top: 5px;
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  color: #f1f5f9 !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  margin-top: 5px;
 }
-
-/* Chat bubbles */
 .chat-left {
-  background-color: #dbeafe !important;  /* assistant bubble */
+  background-color: #dbeafe !important;
   color: #1e3a8a !important;
   border-radius: 10px;
   padding: 10px 15px;
@@ -142,9 +127,8 @@ st.markdown("""
   max-width: 70%;
   text-align: left;
 }
-
 .chat-right {
-  background-color: #e0f2fe !important;  /* user bubble */
+  background-color: #e0f2fe !important;
   color: #1e3a8a !important;
   border-radius: 10px;
   padding: 10px 15px;
@@ -153,8 +137,6 @@ st.markdown("""
   text-align: left;
   margin-left: auto;
 }
-
-/* Main page title */
 h1, h2, h3, h4 {
   color: #2563eb;
   font-size: 1.8rem;
@@ -167,21 +149,21 @@ h1, h2, h3, h4 {
 # --- INITIAL CHAT SESSION ---
 if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
     st.session_state["messages"] = [
-        {"role": "assistant", "content": (
-            "👋 How can I help you with your Company database today?\n\n"
-        )}
+        {
+            "role": "assistant",
+            "content": "👋 How can I help you with your Company database today?\n\n"
+        }
     ]
-    
+
+
 # --- EXAMPLE QUESTIONS ---
 st.sidebar.markdown("**💡 Example Questions:**")
 st.sidebar.markdown(
-    "- Show all employees list in the  company.db  \n"
-    "- Name all the departments in the company \n"
-    "- How many employees are there in the compnay \n"
+    "- Show all employees list in the company.db\n"
+    "- Name all the departments in the company\n"
+    "- How many employees are there in the company\n"
     "- Name the employee who has highest salary"
-    
 )
-
 
 
 # --- DISPLAY CHAT HISTORY ---
@@ -193,33 +175,27 @@ for msg in st.session_state["messages"]:
 
 
 # --- USER INPUT ---
-user_query = st.chat_input(placeholder="Ask anything About  Company ")
+user_query = st.chat_input("Ask anything About Company")
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
     st.markdown(f'<div class="chat-right">{user_query}</div>', unsafe_allow_html=True)
 
     response = None
-    forbidden_commands = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
+    forbidden = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
 
-    if any(cmd in user_query.upper() for cmd in forbidden_commands):
+    if any(cmd in user_query.upper() for cmd in forbidden):
         st.warning("⚠️ Destructive queries are not allowed.")
     else:
         with st.chat_message("assistant"):
             st_callback_container = st.empty()
             streamlit_callback = StreamlitCallbackHandler(st_callback_container)
             try:
-                response_dict = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
-                response = response_dict["output"]
-            except Exception as e:
-                if "token limit" in str(e).lower():
-                    st.warning("⚠️ Token limit reached. Please visit after some time ")
-                else:
-                    st.warning("⚠️ Token limit reached. Please visit after some time ")
-                   
-               
+                result = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
+                response = result["output"]
+            except Exception:
+                st.warning("⚠️ Something went wrong.")
 
-    if response:
-        st.session_state["messages"].append({"role": "assistant", "content": response})
-        st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
-
+        if response:
+            st.session_state["messages"].append({"role": "assistant", "content": response})
+            st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)

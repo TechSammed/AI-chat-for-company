@@ -65,9 +65,7 @@ db = configur_db()
 
 sql_prompt = PromptTemplate.from_template("""
 You are an SQL expert. Always generate SQLite-compatible queries.
-Return clean answers with explanations. if the user ask about any normal question like , hello, What you can do? ,
-for such questions also response in generic way
-
+Return clean answers with explanations.
 User question: {input}
 """)
 
@@ -208,9 +206,6 @@ def is_sql_query(text):
 # --- USER INPUT ---
 user_query = st.chat_input(placeholder="Ask anything About  Company ")
 
-# --- USER INPUT ---
-user_query = st.chat_input(placeholder="Ask anything About  Company ")
-
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
     st.markdown(f'<div class="chat-right">{user_query}</div>', unsafe_allow_html=True)
@@ -252,30 +247,5 @@ if user_query:
                    
                
 
-    if response:
-        st.session_state["messages"].append({"role": "assistant", "content": response})
-        st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
 

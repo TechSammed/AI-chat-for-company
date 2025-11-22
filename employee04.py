@@ -10,15 +10,14 @@ from langchain_community.agent_toolkits.sql.base import create_sql_agent, SQLDat
 from langchain_community.utilities import SQLDatabase
 from langchain_core.callbacks.base import BaseCallbackHandler
 
+
 # --- CUSTOM STREAMLIT CALLBACK HANDLER ---
 class StreamlitCallbackHandler(BaseCallbackHandler):
-    """Custom Streamlit callback handler for streaming responses."""
     def __init__(self, container):
         self.container = container
         self.text = ""
 
     def on_llm_new_token(self, token: str, **kwargs):
-        """Stream tokens in real-time to Streamlit container."""
         self.text += token
         self.container.markdown(self.text)
 
@@ -32,26 +31,17 @@ st.title("💬 Alpha Assist")
 load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 
-# --- VALIDATION ---
 if not api_key:
-    st.error("⚠️ GROQ_API_KEY missing in environment variables.")
+    st.error("⚠️ GROQ_API_KEY missing.")
     st.stop()
 
 
-# --- MODEL SELECTION ---
-model_options = ["llama-3.3-70b-versatile"]
-selected_model = st.sidebar.selectbox("🧠  Model Using ", options=model_options, index=0)
+# --- MODEL ---
+model_name = "llama-3.3-70b-versatile"
+llm = ChatGroq(groq_api_key=api_key, model=model_name, streaming=True)
 
 
-# --- LLM CONFIG ---
-llm = ChatGroq(
-    groq_api_key=api_key,
-    model=selected_model,
-    streaming=True
-)
-
-
-# --- DATABASE CONFIG (SQLite only) ---
+# --- DATABASE ---
 @st.cache_resource(ttl="2h")
 def configur_db():
     dbfilepath = (Path(__file__).parent / "company.db").absolute()
@@ -60,7 +50,7 @@ def configur_db():
 db = configur_db()
 
 
-# --- TOOLKIT AND AGENT ---
+# --- SQL AGENT ---
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 agent = create_sql_agent(
     llm=llm,
@@ -74,99 +64,20 @@ agent = create_sql_agent(
 # --- STYLING ---
 st.markdown("""
 <style>
-[data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #4338ca, #7c3aed);
-  border-right: 2px solid #a5b4fc;
-}
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] p {
-  color: #f9fafb !important;
-  font-weight: 600;
-}
-[data-testid="stSidebar"] label {
-  color: #ffffff !important;
-  font-size: 18px !important;
-  font-weight: 700;
-}
-[data-testid="stSidebar"] button[kind="secondary"] {
-  color: #f9fafb !important;
-  background-color: transparent !important;
-  border: 2px solid #f9fafb !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-}
-[data-testid="stSidebar"] button[kind="secondary"]:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-}
-[data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"] {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  padding: 10px 12px !important;
-  border: 1px solid #f9fafb !important;
-}
-[data-testid="stSidebar"] [data-testid="stExpander"] > div[role="button"]:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-}
-[data-testid="stSidebar"] [data-testid="stExpander"] div[data-testid="stMarkdownContainer"] {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  color: #f1f5f9 !important;
-  padding: 12px !important;
-  border-radius: 8px !important;
-  margin-top: 5px;
-}
-.chat-left {
-  background-color: #dbeafe !important;
-  color: #1e3a8a !important;
-  border-radius: 10px;
-  padding: 10px 15px;
-  margin: 5px 0;
-  max-width: 70%;
-  text-align: left;
-}
-.chat-right {
-  background-color: #e0f2fe !important;
-  color: #1e3a8a !important;
-  border-radius: 10px;
-  padding: 10px 15px;
-  margin: 5px 0;
-  max-width: 70%;
-  text-align: left;
-  margin-left: auto;
-}
-h1, h2, h3, h4 {
-  color: #2563eb;
-  font-size: 1.8rem;
-}
+.chat-left { background-color: #dbeafe; padding: 10px; border-radius: 10px; }
+.chat-right { background-color: #e0f2fe; padding: 10px; border-radius: 10px; margin-left: auto; }
 </style>
-<hr style="border: none; height: 2px; background: #dbeafe; margin-top: -10px; margin-bottom: 20px">
 """, unsafe_allow_html=True)
 
 
-# --- INITIAL CHAT SESSION ---
-if "messages" not in st.session_state or st.sidebar.button("🧹 Clear message history"):
+# --- INITIAL CHAT ---
+if "messages" not in st.session_state:
     st.session_state["messages"] = [
-        {
-            "role": "assistant",
-            "content": "👋 How can I help you with your Company database today?\n\n"
-        }
+        {"role": "assistant", "content": "👋 How can I help you with your Company DB today?"}
     ]
 
 
-# --- EXAMPLE QUESTIONS ---
-st.sidebar.markdown("**💡 Example Questions:**")
-st.sidebar.markdown(
-    "- Show all employees list in the company.db\n"
-    "- Name all the departments in the company\n"
-    "- How many employees are there in the company\n"
-    "- Name the employee who has highest salary"
-)
-
-
-# --- DISPLAY CHAT HISTORY ---
+# --- SHOW CHAT ---
 for msg in st.session_state["messages"]:
     if msg["role"] == "user":
         st.markdown(f'<div class="chat-right">{msg["content"]}</div>', unsafe_allow_html=True)
@@ -175,27 +86,21 @@ for msg in st.session_state["messages"]:
 
 
 # --- USER INPUT ---
-user_query = st.chat_input("Ask anything About Company")
+user_query = st.chat_input("Ask anything about the company DB")
 
 if user_query:
     st.session_state["messages"].append({"role": "user", "content": user_query})
     st.markdown(f'<div class="chat-right">{user_query}</div>', unsafe_allow_html=True)
 
-    response = None
-    forbidden = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT"]
+    with st.chat_message("assistant"):
+        container = st.empty()
+        callback = StreamlitCallbackHandler(container)
 
-    if any(cmd in user_query.upper() for cmd in forbidden):
-        st.warning("⚠️ Destructive queries are not allowed.")
-    else:
-        with st.chat_message("assistant"):
-            st_callback_container = st.empty()
-            streamlit_callback = StreamlitCallbackHandler(st_callback_container)
-            try:
-                result = agent.invoke({"input": user_query}, callbacks=[streamlit_callback])
-                response = result["output"]
-            except Exception:
-                st.warning("⚠️ Something went wrong.")
+        try:
+            result = agent.invoke({"input": user_query}, callbacks=[callback])
+            response = result["output"]
+        except:
+            response = "⚠️ Something went wrong."
 
-        if response:
-            st.session_state["messages"].append({"role": "assistant", "content": response})
-            st_callback_container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
+        st.session_state["messages"].append({"role": "assistant", "content": response})
+        container.markdown(f'<div class="chat-left">{response}</div>', unsafe_allow_html=True)
